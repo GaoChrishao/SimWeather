@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="15dp"
+    >
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+        <TextView
+            android:id="@+id/title_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="苏州"
+            android:layout_centerInParent="true"
+            android:textColor="@color/colorText"
+            android:textSize="60sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/degree_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="20°C"
+            android:textColor="@color/colorText"
+            android:textSize="60sp"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            >
+            <TextView
+                android:id="@+id/weather_infor_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:textColor="@color/colorText"
+                android:text="多云"
+                android:textSize="20sp"
+                android:layout_marginRight="40dp"
+                />
+            <TextView
+                android:id="@+id/title_update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:21"
+                android:textSize="20sp"
+                android:textColor="@color/colorText"
+                android:layout_gravity="right"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

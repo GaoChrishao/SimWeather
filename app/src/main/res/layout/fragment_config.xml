@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/config_mother"
+    >
+    <include layout="@layout/title"/>
+    <LinearLayout
+        android:id="@+id/config_li_1"
+        android:background="@drawable/background_yuanjiao"
+        android:padding="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="20sp"
+            android:textColor="?android:textColor"
+            android:text="1.使用自己的天气key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="在https://console.heweather.com/register获取"
+            android:textColor="?android:textColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <EditText
+                android:id="@+id/config_key_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:layout_weight="5"
+                android:hint="key"
+                android:textColorHint="#87ffffff"
+                />
+            <Button
+                android:id="@+id/config_key_yes"
+                android:text="确定"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/background_yuanjiao_btn"
+                android:textColor="?android:textColor"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/config_li_2"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/background_yuanjiao"
+        android:padding="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2.是否开启后台自动更新天气"
+            android:textColor="?android:textColor"
+            android:textSize="20sp"
+            />
+        <Switch
+            android:id="@+id/switch_back_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            />
+
+
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/config_li_3"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/background_yuanjiao"
+        android:padding="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3.后台更新时间间隔"
+            android:textColor="?android:textColor"
+            android:textSize="20sp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <EditText
+                android:id="@+id/config_circle_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:layout_weight="5"
+                android:hint="每n小时更新一次"
+                android:textColorHint="#87ffffff"
+                android:textColor="?android:textColor"
+                />
+            <Button
+                android:id="@+id/config_circle_yes"
+                android:text="确定"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/background_yuanjiao_btn"
+                android:textColor="?android:textColor"
+                />
+        </LinearLayout>
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>

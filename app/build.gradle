@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+
+android {
+    //签名
+    signingConfigs {
+        debug {
+
+        }
+        release {// 自己的签名文件
+            storeFile file("C:\\Users\\GaoCh\\Desktop\\GCH\\makeapp.jks")
+            storePassword "adh552200ily."
+            keyAlias "key0"
+            keyPassword "asdbjasdhaca21"
+        }
+    }
+
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.simweather.gaoch"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 321
+        versionName "3.2.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            //混淆
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources false
+        }
+    }
+
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support:palette-v7:28.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.5.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+
+}

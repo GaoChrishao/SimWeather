@@ -1,0 +1,80 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme_blue" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark</item>
+    </style>
+    <style name="AppTheme_yellow" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary1</item>
+        <item name="colorPrimaryDark">@color/colorPrimary1</item>
+        <item name="colorAccent">@color/colorAccent1</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary1</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark1</item>
+    </style>
+
+    <style name="AppTheme_red" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary2</item>
+        <item name="colorPrimaryDark">@color/colorPrimary2</item>
+        <item name="colorAccent">@color/colorAccent2</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColorSecondary">@color/secondaryText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary2</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark2</item>
+    </style>
+
+    <style name="AppTheme_grey" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary3</item>
+        <item name="colorPrimaryDark">@color/colorPrimary3</item>
+        <item name="colorAccent">@color/colorAccent3</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary3</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark3</item>
+    </style>
+
+    <style name="AppTheme_pink" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary4</item>
+        <item name="colorPrimaryDark">@color/colorPrimary4</item>
+        <item name="colorAccent">@color/colorAccent4</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary4</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark4</item>
+    </style>
+
+    <style name="AppTheme_green" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary5</item>
+        <item name="colorPrimaryDark">@color/colorPrimary5</item>
+        <item name="colorAccent">@color/colorAccent5</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary5</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark5</item>
+    </style>
+
+    <style name="AppTheme_blue1" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary6</item>
+        <item name="colorPrimaryDark">@color/colorPrimary6</item>
+        <item name="colorAccent">@color/colorAccent6</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:navigationBarColor">@color/colorPrimary6</item>
+        <item name="android:actionMenuTextColor">@color/colorPrimaryDark6</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+
+
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/hourly_forecast"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background_yuanjiao"
+    android:layout_margin="15dp"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:text="24H"
+        android:textColor="@color/colorText"
+        android:textSize="20sp"
+        />
+    <com.simweather.gaoch.MyView.LineHourlyView
+        android:id="@+id/forecast_paint_hourly"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="15dp"
+        >
+    </com.simweather.gaoch.MyView.LineHourlyView>
+
+</LinearLayout>

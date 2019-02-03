@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:padding="15dp"
+    android:id="@+id/nav_header"
+    android:background="?attr/colorPrimary"
+    >
+    <TextView
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City"
+        android:textSize="35sp"
+        android:textColor="@color/colorText"
+        android:id="@+id/nav_header_locate" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="25°C"
+        android:textSize="20sp"
+        android:layout_toRightOf="@id/nav_header_locate"
+        android:padding="20dp"
+        android:layout_centerVertical="true"
+        android:textColor="@color/colorText"
+        android:id="@+id/nav_header_temp" />
+    <TextView
+        android:id="@+id/nav_bar_words"
+        android:textColor="@color/colorText"
+        android:text="相信每一天都是美好的一天"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        />
+
+    <TextView
+        android:id="@+id/nav_bar_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/nav_header_locate"
+        android:text="Hello User!"
+        android:textColor="@color/colorText" />
+
+
+
+</RelativeLayout>

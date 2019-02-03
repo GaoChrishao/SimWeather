@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/widgrt_ico"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/w100"
+            />
+        <TextView
+            android:id="@+id/widgrt_qlty"
+            android:text="良"
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/colorText"
+            />
+        <TextView
+            android:id="@+id/widgrt_temp"
+            android:text="25°C"
+            android:textSize="30sp"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/colorText"
+
+            />
+    </LinearLayout>
+
+
+</LinearLayout>
