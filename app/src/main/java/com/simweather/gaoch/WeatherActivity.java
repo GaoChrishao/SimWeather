@@ -67,6 +67,8 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.simweather.gaoch.util.ConstValue.LOCATIONGPS;
+import static com.simweather.gaoch.util.ConstValue.getConfigDataName;
+import static com.simweather.gaoch.util.ConstValue.sp_radius;
 
 public class WeatherActivity extends MyAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -102,7 +104,7 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
         blur_main=findViewById(R.id.main_fragment);
 
 
-
+        ConstValue.radius=getSharedPreferences(getConfigDataName(),MODE_PRIVATE).getInt(sp_radius,ConstValue.radius);
 
 
 
@@ -197,6 +199,15 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                             fragmentWeather=null;
                         }
                         navView.setCheckedItem(R.id.nav_config);
+                        break;
+                    case R.id.nav_about:
+                        transaction.replace(R.id.main_fragment, new FragmentAbout());
+                        transaction.commit();
+                        if(fragmentWeather!=null){
+                            fragmentWeather.onDestroy();
+                            fragmentWeather=null;
+                        }
+                        navView.setCheckedItem(R.id.nav_about);
                         break;
                 }
                 drawerLayout.closeDrawers();

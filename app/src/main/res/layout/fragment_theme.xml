@@ -1,183 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/fragment_theme_layout"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+<ScrollView
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <include layout="@layout/title"/>
-
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
     <LinearLayout
-        android:background="@drawable/background_yuanjiao"
+        android:id="@+id/fragment_theme_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:padding="15dp"
-        android:id="@+id/fragment_theme_layout_1"
-        >
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <TextView
-            android:layout_marginTop="20dp"
-            android:text="1.主题颜色"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <include layout="@layout/title"/>
+
         <LinearLayout
+            android:background="@drawable/background_yuanjiao"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center|top"
-            android:orientation="horizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="15dp"
+            android:id="@+id/fragment_theme_layout_1"
             >
-            <RadioGroup
-                android:id="@+id/config_theme"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:text="1.主题颜色"
+                android:textColor="@color/colorText"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:orientation="vertical"
+                android:gravity="center|top"
+                android:orientation="horizontal"
                 >
-                <RadioButton
-                    android:id="@+id/config_theme_blue"
-                    android:layout_width="wrap_content"
+                <RadioGroup
+                    android:id="@+id/config_theme"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="胖子蓝"
-                    />
-                <RadioButton
-                    android:id="@+id/config_theme_yellow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary1"
-                    android:text="鸭蛋黄"
-                    />
-                <RadioButton
-                    android:id="@+id/config_theme_grey"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary3"
-                    android:text="雾霾灰"
-                    />
-                <RadioButton
-                    android:id="@+id/config_theme_red"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary2"
-                    android:text="脸腮红"
-                    />
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    >
+                    <RadioButton
+                        android:id="@+id/config_theme_blue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary"
+                        android:text="胖子蓝"
+                        />
+                    <RadioButton
+                        android:id="@+id/config_theme_yellow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary1"
+                        android:text="鸭蛋黄"
+                        />
+                    <RadioButton
+                        android:id="@+id/config_theme_grey"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary3"
+                        android:text="雾霾灰"
+                        />
+                    <RadioButton
+                        android:id="@+id/config_theme_red"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary2"
+                        android:text="脸腮红"
+                        />
 
 
-            </RadioGroup>
-            <RadioGroup
-                android:id="@+id/config_theme_1"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:orientation="vertical"
-                >
-                <RadioButton
-                    android:id="@+id/config_theme_pink"
-                    android:layout_width="wrap_content"
+                </RadioGroup>
+                <RadioGroup
+                    android:id="@+id/config_theme_1"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary4"
-                    android:text="闪亮粉"
-                    />
-                <RadioButton
-                    android:id="@+id/config_theme_green"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary5"
-                    android:text="苔藓绿"
-                    />
-                <RadioButton
-                    android:id="@+id/config_theme_blue1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary6"
-                    android:text="天空蓝"
-                    />
+                    android:paddingLeft="20dp"
+                    android:orientation="vertical"
+                    >
+                    <RadioButton
+                        android:id="@+id/config_theme_pink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary4"
+                        android:text="闪亮粉"
+                        />
+                    <RadioButton
+                        android:id="@+id/config_theme_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary5"
+                        android:text="苔藓绿"
+                        />
+                    <RadioButton
+                        android:id="@+id/config_theme_blue1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimary6"
+                        android:text="天空蓝"
+                        />
 
-            </RadioGroup>
+                </RadioGroup>
+
+            </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/fragment_theme_layout_2"
-        android:background="@drawable/background_yuanjiao"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:padding="15dp">
-        <TextView
-            android:layout_marginTop="20dp"
-            android:text="2.自定义背景图片"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:id="@+id/fragment_theme_layout_2"
+            android:background="@drawable/background_yuanjiao"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:padding="15dp">
+            <TextView
+                android:layout_marginTop="20dp"
+                android:text="2.自定义背景图片"
+                android:textColor="@color/colorText"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/theme_chooseBG"
+                <Button
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/theme_chooseBG"
+                    android:textColor="@color/colorText"
+                    android:background="@drawable/background_yuanjiao_btn"
+                    android:layout_marginRight="35dp"
+                    android:text="选择"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/theme_cancelBG"
+                    android:textColor="@color/colorText"
+                    android:background="@drawable/background_yuanjiao_btn"
+                    android:text="清除"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/fragment_theme_layout_blur"
+            android:background="@drawable/background_yuanjiao"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:padding="15dp">
+            <TextView
+                android:layout_marginTop="20dp"
+                android:text="3.毛玻璃效果"
                 android:textColor="@color/colorText"
-                android:background="@drawable/background_yuanjiao_btn"
-                android:layout_marginRight="35dp"
-                android:text="选择"
-                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <Button
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/theme_cancelBG"
-                android:textColor="@color/colorText"
-                android:background="@drawable/background_yuanjiao_btn"
-                android:text="清除"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp"
+                >
+                <TextView
+                    android:text="是否开启:"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Switch
+                    android:layout_gravity="center"
+                    android:id="@+id/config_theme_switch_blur"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="15dp"
+                >
+                <SeekBar
+                    android:id="@+id/config_theme_seek_blur"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="25"
+                    />
+                <TextView
+                    android:id="@+id/config_theme_text_blur"
+                    android:text="模糊程度:"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
+
+
+
+
         </LinearLayout>
 
 
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/fragment_theme_layout_blur"
-        android:background="@drawable/background_yuanjiao"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
-        android:padding="15dp">
-        <TextView
-            android:layout_marginTop="20dp"
-            android:text="3.开启毛玻璃效果"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Switch
-            android:layout_gravity="center"
-            android:id="@+id/config_theme_switch_blur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
 
     </LinearLayout>
+</ScrollView>
 
-
-
-</LinearLayout>

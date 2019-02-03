@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/about_mother"
+    >
+    <include layout="@layout/title"/>
+    <LinearLayout
+        android:id="@+id/about_li_1"
+        android:background="@drawable/background_yuanjiao"
+        android:padding="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="20sp"
+            android:textColor="?android:textColor"
+            android:text="1.开发者"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="?android:textColor"
+            android:text="GaoChrishao/GaoChrishao@outlook.com"
+            android:layout_marginLeft="15dp"
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/about_li_2"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical"
+        android:background="@drawable/background_yuanjiao"
+        android:padding="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2.源代码"
+            android:textColor="?android:textColor"
+            android:textSize="20sp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="Github@GaoChrishao/SimWeather"
+            android:textColor="?android:textColor"
+
+            />
+
+
+
+
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

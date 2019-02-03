@@ -1,6 +1,8 @@
 package com.simweather.gaoch;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.simweather.gaoch.util.Blur;
@@ -35,6 +39,8 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
     private Button navButton;
     private Button BgButton;
     private Button BgButton1;
+    private SeekBar seek_blur;
+    private TextView text_blur;
     private LinearLayout layout1, layout2,layout3;
     int hasSetRadioButtomsColor=0;
     private int hasBlured_top1=0,hasBlured_top2=0,hasBlured_top3=0;
@@ -56,6 +62,8 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
         layout2 = view.findViewById(R.id.fragment_theme_layout_2);
         layout3=view.findViewById(R.id.fragment_theme_layout_blur);
         switch_blur=view.findViewById(R.id.config_theme_switch_blur);
+        seek_blur=view.findViewById(R.id.config_theme_seek_blur);
+        text_blur=view.findViewById(R.id.config_theme_text_blur);
 
 
         theme_radio_group = view.findViewById(R.id.config_theme);
@@ -101,6 +109,29 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
                 }
             }
         });
+        seek_blur.setProgress(ConstValue.radius);
+        text_blur.setText("模糊程度:"+ConstValue.radius+"/25");
+        seek_blur.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                text_blur.setText("模糊程度:"+progress+"/25");
+                ConstValue.radius=progress;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences(ConstValue.getConfigDataName(),Context.MODE_PRIVATE).edit();
+                editor.putInt(ConstValue.sp_radius,ConstValue.radius);
+                editor.apply();
+                Toast.makeText(getContext(), "重启生效", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         navButton.setOnClickListener(new View.OnClickListener() {
@@ -129,7 +160,13 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
         WeatherActivity activity = (WeatherActivity) getActivity();
         if(activity.getIsBlur()){
             switch_blur.setChecked(true);
+            seek_blur.setVisibility(View.VISIBLE);
+            text_blur.setVisibility(View.VISIBLE);
+        }else{
+            seek_blur.setVisibility(View.GONE);
+            text_blur.setVisibility(View.GONE);
         }
+
         setRadioButtomsColor(activity);
         setBlur();
 
@@ -214,7 +251,7 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
                 @Override
                 public boolean onPreDraw() {
                     if(hasBlured_top1!=layout1.getTop()){
-                        Blur.blur_static(view_test,layout1,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
+                        Blur.blur(view_test,layout1,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
                         hasBlured_top1=layout1.getTop();
                     }
 
@@ -225,7 +262,7 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
                 @Override
                 public boolean onPreDraw() {
                     if(hasBlured_top2!=layout2.getTop()){
-                        Blur.blur_static(view_test,layout2,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
+                        Blur.blur(view_test,layout2,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
                         hasBlured_top2=layout2.getTop();
                     }
 
@@ -236,7 +273,7 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
                 @Override
                 public boolean onPreDraw() {
                     if(hasBlured_top3!=layout3.getTop()){
-                        Blur.blur_static(view_test,layout3,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
+                        Blur.blur(view_test,layout3,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
                         hasBlured_top3=layout3.getTop();
                     }
                     return true;

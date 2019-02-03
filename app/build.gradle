@@ -20,8 +20,8 @@ android {
         applicationId "com.simweather.gaoch"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 321
-        versionName "3.2.1"
+        versionCode 330
+        versionName "3.3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

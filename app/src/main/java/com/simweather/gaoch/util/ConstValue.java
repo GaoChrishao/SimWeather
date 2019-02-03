@@ -7,6 +7,7 @@ import android.Manifest;
  */
 
 public class ConstValue {
+    public static String githubUrl="https://github.com/GaoChrishao/SimWeather";
     public static String key = "ff0bd8c0e7844121aa3b571522a1e9b6";
     public static String colorText = "#ffffff";
     public static String colorPrimary = "#67b4c7";
@@ -24,6 +25,7 @@ public class ConstValue {
     public static String sp_weatherid="weatherId";
 
     //毛玻璃效果参数
+    public static String sp_radius="sp_radius";
     public static int RoundCorner=50;
     public static int radius=10;
     public static int scaleFactor=26;
