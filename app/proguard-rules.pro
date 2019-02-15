@@ -77,11 +77,19 @@
 #保护注解
 -keepattributes *Annotation*
 
-#排除okhttp
--dontwarn com.squareup.**
+
+# okhttp
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# okio
+-keep class sun.misc.Unsafe { *; }
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-keep class okio.**{*;}
 -dontwarn okio.**
--keep public class org.codehaus.* { *; }
--keep public class java.nio.* { *; }
+
 
 #排除HeWeather
 -dontwarn interfaces.heweather.com.interfacesmodule.**

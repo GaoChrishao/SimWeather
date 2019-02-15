@@ -1,9 +1,16 @@
 package com.simweather.gaoch.util;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.google.gson.Gson;
+import com.simweather.gaoch.LocalDatabaseHelper;
+import com.simweather.gaoch.WeatherActivity;
 import com.simweather.gaoch.gson_weather.Weather;
 
 import org.json.JSONArray;
@@ -40,6 +47,41 @@ public class Utility {
     public static int sp2px(Context context,float spValue){
         float fontScale=context.getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue*fontScale+0.5f);
+    }
+
+    public static boolean saveWeatherToDB(SQLiteDatabase db,String responseText){
+        final Weather weather = Utility.handleWeather6Response(responseText);
+        if(weather==null||!weather.status.equals("ok")){
+            Log.e("GGG","所获取到的responseText无效");
+            return false;
+        }
+        Cursor cursor = db.query(LocalDatabaseHelper.tableName, null, LocalDatabaseHelper.citycode+"=?", new String[] { weather.basic.weatherId}, null, null, null);
+        if(cursor.moveToNext()){
+            //表示存在，只需要更新
+            String sql = "UPDATE "+LocalDatabaseHelper.tableName+" set "+LocalDatabaseHelper.content+"='"+responseText+"' where "+LocalDatabaseHelper.citycode+"='"+weather.basic.weatherId+"';";
+
+            db.execSQL(sql);
+            Log.e("GGG","数据库更新");
+        }else{
+            //不存在，需要添加
+            ContentValues value = new ContentValues();
+            value.put(LocalDatabaseHelper.citycode,weather.basic.weatherId);
+            value.put(LocalDatabaseHelper.content,responseText);
+            db.insert(LocalDatabaseHelper.tableName,null,value);
+            Log.e("GGG","数据库添加");
+        }
+        db.close();
+        return true;
+    }
+
+    public static boolean isDbEmpty(SQLiteDatabase db){
+        Cursor cursor = db.query(LocalDatabaseHelper.tableName, null, null, null, null, null, null);
+        if(cursor.moveToNext()){
+            db.close();
+            return false;
+        }
+        db.close();
+        return true;
     }
 
 

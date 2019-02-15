@@ -6,16 +6,17 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -36,11 +37,9 @@ import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.DisplayCutout;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -67,7 +66,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.simweather.gaoch.util.ConstValue.LOCATIONGPS;
-import static com.simweather.gaoch.util.ConstValue.getConfigDataName;
+import static com.simweather.gaoch.util.ConstValue.currentLatitude;
 import static com.simweather.gaoch.util.ConstValue.sp_radius;
 
 public class WeatherActivity extends MyAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -75,7 +74,7 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
 
     public DrawerLayout drawerLayout;
     public NavigationView navView;
-    public FragmentWeather fragmentWeather;
+    public FragmentWeathers fragmentWeather;
     private TextView locate;
     private TextView temp;
     public String bg_path;
@@ -83,6 +82,8 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
     public int primaryColor;
     private final int requestPermissionsCode = 100;//权限请求码
     private LocationManager locationManager;
+    public LocalDatabaseHelper dbHelper;
+    private boolean hasDB;
 
 
 
@@ -104,36 +105,42 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
         blur_main=findViewById(R.id.main_fragment);
 
 
-        ConstValue.radius=getSharedPreferences(getConfigDataName(),MODE_PRIVATE).getInt(sp_radius,ConstValue.radius);
-
+        SharedPreferences sharedPreferences=getSharedPreferences(ConstValue.configDataName,MODE_PRIVATE);
+        ConstValue.radius=sharedPreferences.getInt(sp_radius,ConstValue.radius);
+        dbHelper =new LocalDatabaseHelper(this,ConstValue.LocalDatabaseName,null,LocalDatabaseHelper.NEW_VERSION);
+        String locationString = sharedPreferences.getString(ConstValue.sp_location,"");
+        if(!locationString.equals("")){
+            String s[]=locationString.split(",");
+            ConstValue.currentLatitude=Double.valueOf(s[1]);
+            ConstValue.currentLongitude=Double.valueOf(s[0]);
+        }
+        hasDB=sharedPreferences.getBoolean(ConstValue.hasDB,false);
 
 
         String id=getIntent().getStringExtra("id");
         requestPermissons();
+        initDB();
 
         if(id!=null&&!id.isEmpty()){
             //根据搜索后选择的城市来获取城市信息
             Log.d("WeatherActivity",id);
             getRequestWeather(id);
-        }else{
-            if (!getResponseText().equals("")) {
-                //已经保存有天气数据
-                showFragmentWeather();
-                startService();
-            } else {
-                //未保存天气数据
-                String location=getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE).getString(ConstValue.sp_location,"");
-                if(location.equals("")){
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    fragmentWeather=new FragmentWeather();
-                    transaction.replace(R.id.main_fragment, fragmentWeather);
-                    transaction.commit();
-                }else {
-                    //保存有经纬度信息
-                    getRequestWeather(location);
-                }
+        }else if(Utility.isDbEmpty(dbHelper.getReadableDatabase())){
+            //未保存任何天气信息
+            if(!getLocation().equals("")){
+                //保存有GPS定位信息
+                getRequestWeather(getLocation());
+            }else{
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_fragment, new FragmentSearch());
+                transaction.commit();
             }
+        }else{
+            //保存有天气信息
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.main_fragment, new FragmentWeathers());
+            transaction.commit();
+            startService();
         }
 
 
@@ -152,61 +159,52 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (item.getItemId()) {
                     case R.id.nav_weather:
-                        if (fragmentWeather==null) {
-                            String weatherId;
-                            SharedPreferences preferences = getSharedPreferences(ConstValue.getConfigDataName(), MODE_PRIVATE);
-                            String responseText = getResponseText();
-                            if (responseText != "") {
-                                //如果已经有天气缓存，则从天气缓存得到天气
-                                showFragmentWeather();
-                                navView.setCheckedItem(R.id.nav_weather);
-                            } else if ((weatherId = preferences.getString(ConstValue.sp_weatherid, "")) != "") {
-                                //如果没有天气缓存，根据weatherId，从服务器获取
-                                getRequestWeather(weatherId);
-                                navView.setCheckedItem(R.id.nav_weather);
-                            } else {
-                                //如果没有weatherId,请选择城市
-                                transaction.replace(R.id.main_fragment, new FragmentSearch());
-                                transaction.commit();
-                                navView.setCheckedItem(R.id.nav_city);
-                            }
+                        if (hasDB) {
+                            //如果已经有天气缓存，则从天气缓存得到天气
+                            showFragmentWeather();
+                            navView.setCheckedItem(R.id.nav_weather);
+                        } else {
+                            //如果没有weatherId,请选择城市
+                            transaction.replace(R.id.main_fragment, new FragmentSearch());
+                            transaction.commit();
+                            navView.setCheckedItem(R.id.nav_city);
                         }
                         break;
                     case R.id.nav_city:
                         transaction.replace(R.id.main_fragment,new FragmentSearch());
                         transaction.commit();
-                        if(fragmentWeather!=null){
-                            fragmentWeather.onDestroy();
-                            fragmentWeather=null;
-                        }
+//                        if(fragmentWeather!=null){
+//                            fragmentWeather.onDestroy();
+//                            fragmentWeather=null;
+//                        }
                         navView.setCheckedItem(R.id.nav_city);
                         break;
                     case R.id.nav_theme:
                         transaction.replace(R.id.main_fragment, new FragmentTheme());
                         transaction.commit();
-                        if(fragmentWeather!=null){
-                            fragmentWeather.onDestroy();
-                            fragmentWeather=null;
-                        }
+//                        if(fragmentWeather!=null){
+//                            fragmentWeather.onDestroy();
+//                            fragmentWeather=null;
+//                        }
 
                         navView.setCheckedItem(R.id.nav_theme);
                         break;
                     case R.id.nav_config:
                         transaction.replace(R.id.main_fragment, new FragmentConfig());
                         transaction.commit();
-                        if(fragmentWeather!=null){
-                            fragmentWeather.onDestroy();
-                            fragmentWeather=null;
-                        }
+//                        if(fragmentWeather!=null){
+//                            fragmentWeather.onDestroy();
+//                            fragmentWeather=null;
+//                        }
                         navView.setCheckedItem(R.id.nav_config);
                         break;
                     case R.id.nav_about:
                         transaction.replace(R.id.main_fragment, new FragmentAbout());
                         transaction.commit();
-                        if(fragmentWeather!=null){
-                            fragmentWeather.onDestroy();
-                            fragmentWeather=null;
-                        }
+//                        if(fragmentWeather!=null){
+//                            fragmentWeather.onDestroy();
+//                            fragmentWeather=null;
+//                        }
                         navView.setCheckedItem(R.id.nav_about);
                         break;
                 }
@@ -288,10 +286,10 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
      * @param weatherId
      */
     public void getRequestWeather(final String weatherId) {
+        Log.e("GGG","getRequestWeather的weatherID:"+weatherId);
         SharedPreferences preferences = getSharedPreferences(ConstValue.getConfigDataName(), MODE_PRIVATE);
         String key = preferences.getString(ConstValue.sp_key, ConstValue.getKey());
         String weatherUrl="https://free-api.heweather.com/s6/weather?key="+key+"&location="+weatherId;
-        fragmentWeather.swipeRefresh.setRefreshing(true);
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -299,7 +297,6 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
-                        fragmentWeather.swipeRefresh.setRefreshing(false);
                     }
                 });
             }
@@ -307,22 +304,18 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                final Weather weather = Utility.handleWeather6Response(responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (weather != null && "ok".equals(weather.status)) {
-                            SharedPreferences.Editor editor = getSharedPreferences(ConstValue.getConfigDataName(), MODE_PRIVATE).edit();
-                            editor.putString(ConstValue.sp_responseText, responseText);
-                            editor.putString(ConstValue.sp_weatherid, weatherId);
-                            editor.apply();
-                            Log.d("WeatherActivity", "getRequestWeather()成功从服务器获取天气！");
-                            fragmentWeather.showWeatherInfo();
-                            fragmentWeather.swipeRefresh.setRefreshing(false);
-                        } else {
-                            Toast.makeText(WeatherActivity.this, "获取天气信息失败！", Toast.LENGTH_SHORT).show();
-                            fragmentWeather.swipeRefresh.setRefreshing(false);
-                        }
+                        Utility.saveWeatherToDB(dbHelper.getWritableDatabase(),responseText);
+
+                        //设置初始化数据库标记
+                        SharedPreferences.Editor editor = getSharedPreferences(ConstValue.configDataName,MODE_PRIVATE).edit();
+                        editor.putBoolean(ConstValue.hasDB,true);
+                        editor.apply();
+
+                        showFragmentWeather();
+
                     }
                 });
             }
@@ -336,10 +329,10 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
     public void showFragmentWeather() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        fragmentWeather = new FragmentWeather();
-        transaction.replace(R.id.main_fragment, fragmentWeather);
+        transaction.replace(R.id.main_fragment, new FragmentWeathers());
         transaction.commit();
         navView.setCheckedItem(R.id.nav_weather);
+        Log.e("GGG","showFragmentWeather");
     }
 
 
@@ -515,15 +508,8 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
         boolean is = preferences.getBoolean(ConstValue.isBackGroundService, true);
         int circler_hours=getServiceHours();
         if (is) {
-            //Intent intent = new Intent(this, AutoUpdateService.class);
             JobService(circler_hours);
-            //stopService(intent);
-            //startService(intent);
-            //Log.d("WeatherActivity", "后台服务开启！");
-
         } else {
-            // Intent intent = new Intent(this, AutoUpdateService.class);
-            // stopService(intent);
             JobScheduler mJobScheduler= (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
             mJobScheduler.cancelAll();  //先取消之前已经在运行的jobscheduler,在创建新的
             Log.d("WeatherActivity", "后台服务未开启！");
@@ -914,13 +900,13 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
             String string =location.getLongitude()+","+location.getLatitude();
             Log.e("GGG",string);
             double lon=location.getLongitude();
-            if(Math.abs(lon)>0.00001){
+            if(Math.abs(lon)>0.00001&&Math.abs(ConstValue.currentLatitude-location.getLatitude())>0.01&&Math.abs(ConstValue.currentLongitude-location.getLongitude())>0.01){
                 SharedPreferences.Editor editor = getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE).edit();
                 editor.putString(ConstValue.sp_location,string);
                 editor.apply();
-                if(getResponseText().equals("")){
-                    getRequestWeather(string);
-                }
+                ConstValue.currentLatitude=location.getLatitude();
+                ConstValue.currentLongitude=location.getLongitude();
+                getRequestWeather(string);
             }
         }
 
@@ -935,13 +921,13 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                 String string =location.getLongitude()+","+location.getLatitude();
                 Log.e("GGG",string);
                 double lon=location.getLongitude();
-                if(Math.abs(lon)>0.00001){
+                if(Math.abs(lon)>0.00001&&Math.abs(ConstValue.currentLatitude-location.getLatitude())>0.01&&Math.abs(ConstValue.currentLongitude-location.getLongitude())>0.01){
                     SharedPreferences.Editor editor = getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE).edit();
                     editor.putString(ConstValue.sp_location,string);
                     editor.apply();
-                    if(getResponseText().equals("")){
-                        getRequestWeather(string);
-                    }
+                    ConstValue.currentLatitude=location.getLatitude();
+                    ConstValue.currentLongitude=location.getLongitude();
+                    getRequestWeather(string);
                 }
             }
 
@@ -966,6 +952,29 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
     public String getLocation(){
         return getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE).getString(ConstValue.sp_location,"");
     }
+
+    public void initDB(){
+        if(!hasDB){
+            //执行第一次初始化数据库操作，将当前的weather信息填入
+            String responseext=getResponseText();
+            if(!responseext.equals("")){
+                SQLiteDatabase db =dbHelper.getWritableDatabase();
+                Weather weather = Utility.handleWeather6Response(responseext);
+                ContentValues value = new ContentValues();
+                value.put(LocalDatabaseHelper.citycode,weather.basic.weatherId);
+                value.put(LocalDatabaseHelper.content,responseext);
+                db.insert(LocalDatabaseHelper.tableName,null,value);
+                db.close();
+                SharedPreferences.Editor editor = getSharedPreferences(ConstValue.configDataName,MODE_PRIVATE).edit();
+                editor.putBoolean(ConstValue.hasDB,true);
+                editor.apply();
+                Log.e("GGG","初始化数据库成功");
+            }
+        }else{
+            //已经保存responseText进入数据库
+        }
+    }
+
 
 
 

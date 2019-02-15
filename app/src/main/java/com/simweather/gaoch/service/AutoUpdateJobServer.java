@@ -11,6 +11,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.simweather.gaoch.LocalDatabaseHelper;
 import com.simweather.gaoch.R;
 import com.simweather.gaoch.WeatherActivity;
 import com.simweather.gaoch.WeatherWidget;
@@ -28,12 +31,15 @@ import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.Utility;
 
 import java.io.IOException;
+import java.io.PipedReader;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class AutoUpdateJobServer extends JobService {
+    private LocalDatabaseHelper dbHelper;
+    private Weather weather;
     @Override
     public boolean onStartJob(JobParameters params) {
         // 返回true，表示该工作耗时，同时工作处理完成后需要调用onStopJob销毁（jobFinished）
@@ -71,8 +77,17 @@ public class AutoUpdateJobServer extends JobService {
      * 更新天气信息
      */
     public void updateWeather(){
+        if(dbHelper==null){
+            dbHelper =new LocalDatabaseHelper(this,ConstValue.LocalDatabaseName,null,LocalDatabaseHelper.NEW_VERSION);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.query(LocalDatabaseHelper.tableName, null, null, null, null, null, null);
+            if(cursor.moveToNext()){
+                weather=Utility.handleWeather6Response(cursor.getString(cursor.getColumnIndex(LocalDatabaseHelper.content)));
+                db.close();
+            }
+        }
         SharedPreferences prefs = getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE);
-        String weatherId = prefs.getString(ConstValue.sp_weatherid,"");
+        String weatherId =weather.basic.weatherId;
         if(weatherId!=""&&weatherId!=null){
             String key = prefs.getString(ConstValue.sp_key,"");
             if(key.equals("")||key==null){
@@ -90,13 +105,10 @@ public class AutoUpdateJobServer extends JobService {
                     final String responseText = response.body().string();
                     final Weather weather = Utility.handleWeather6Response(responseText);
                     if(weather!=null&&"ok".equals(weather.status)){
-                        SharedPreferences.Editor editor = getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE).edit();
-                        editor.putString(ConstValue.sp_responseText,responseText);
-                        editor.apply();
+                        Utility.saveWeatherToDB(dbHelper.getWritableDatabase(),responseText);
                         Log.d("JobService()","更新天气信息成功！"+weather.basic.cityName);
-                        UpdateWidgrt();
+                        UpdateWidgrt(weather);
                         showNotif(weather);
-
                     }else{
                         Log.d("JobService()","更新天气信息失败！");
                     }
@@ -164,11 +176,8 @@ public class AutoUpdateJobServer extends JobService {
     /**
      * 更新桌面小部件
      */
-    public void UpdateWidgrt(){
-        SharedPreferences preferences = getSharedPreferences(ConstValue.getConfigDataName(),MODE_PRIVATE);
-        String responseText = preferences.getString("responseText","");
-        if(responseText!=""){
-            Weather weather = Utility.handleWeather6Response(responseText);
+    public void UpdateWidgrt(Weather weather){
+        if(weather!=null){
             //更新Widget
             RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(),R.layout.weather_widget);
             remoteViews.setTextViewText(R.id.widgrt_temp,weather.now.tmp +"°C");

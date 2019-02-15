@@ -3,6 +3,8 @@ package com.simweather.gaoch;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +12,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -22,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Toast;
 import com.google.gson.Gson;
 import com.simweather.gaoch.gson_city.CityAdapter;
+import com.simweather.gaoch.gson_city.CityHasAdapter;
 import com.simweather.gaoch.gson_city.CitySearch;
 import com.simweather.gaoch.gson_weather.Weather;
 import com.simweather.gaoch.util.Blur;
@@ -49,11 +53,13 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentSearch extends Fragment {
     private ProgressDialog progressDialog;
-    private int hasBlured_bottom1=0,hasBlured_bottom2=0;
+    private int hasBlured_bottom1=0,hasBlured_bottom2=0,hasBlured_bottom3;
     private SearchView searchCities;
-    private RecyclerView recyclerView;
-    CityAdapter adapter;
+    private RecyclerView recyclerView,recyclerViewHas;
+    private CityAdapter adapter;
+    private CityHasAdapter cityHasAdapter;
     private List<CitySearch.Basic> cityList;
+    private List<Weather>weatherList;
 
 
 
@@ -64,8 +70,10 @@ public class FragmentSearch extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search,container,false);
        searchCities=view.findViewById(R.id.fragment_search_sv);
        searchCities.setSubmitButtonEnabled(true);
-       searchCities.onActionViewExpanded();
+       //searchCities.onActionViewExpanded();
+        searchCities.setIconifiedByDefault(false);
        recyclerView=view.findViewById(R.id.fragment_search_rv);
+       recyclerViewHas=view.findViewById(R.id.fragment_search_rv_has);
         return view;
     }
 
@@ -103,6 +111,39 @@ public class FragmentSearch extends Fragment {
                 return false;
             }
         });
+
+
+
+        weatherList=new ArrayList<Weather>();
+        initWeatherList(weatherList);
+        cityHasAdapter = new CityHasAdapter(weatherList);
+        cityHasAdapter.setOnItemClickListener(new CityHasAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Toast.makeText(getContext(), "长按删除该城市", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemLongClick(View view, int positio) {
+                Weather weather = weatherList.get(positio);
+                SQLiteDatabase db = ((WeatherActivity)getActivity()).dbHelper.getWritableDatabase();
+                Log.e("GGG",weather.basic.weatherId);
+                db.delete(LocalDatabaseHelper.tableName,LocalDatabaseHelper.citycode+"=?",new String[]{weather.basic.weatherId});
+                db.close();
+                Toast.makeText(getContext(), "成功删除城市:"+weather.basic.cityName, Toast.LENGTH_SHORT).show();
+                weatherList.remove(weatherList.get(positio));
+                cityHasAdapter.update(weatherList);
+
+            }
+        });
+        RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(getContext());
+        recyclerViewHas.setAdapter(cityHasAdapter);
+        recyclerViewHas.setLayoutManager(layoutManager1);
+
+        if(weatherList.size()<=0){
+            recyclerViewHas.setVisibility(View.GONE);
+        }
+
         setBlur();
 
     }
@@ -194,10 +235,7 @@ public class FragmentSearch extends Fragment {
                 final String responseText = response.body().string();
                 final Weather weather = Utility.handleWeather6Response(responseText);
                 if (weather != null && "ok".equals(weather.status)) {
-                    SharedPreferences.Editor editor = activity.getSharedPreferences(ConstValue.getConfigDataName(), MODE_PRIVATE).edit();
-                    editor.putString(ConstValue.sp_responseText, responseText);
-                    editor.putString(ConstValue.sp_weatherid, weatherId);
-                    editor.apply();
+                    Utility.saveWeatherToDB(((WeatherActivity)getActivity()).dbHelper.getWritableDatabase(),responseText);
                     Log.d("FragmenSearch", "requestWeather()从服务器获取");
                     Message msg = new Message();
                     msg.what=3;
@@ -269,9 +307,34 @@ public class FragmentSearch extends Fragment {
                     return true;
                 }
             });
+            recyclerViewHas.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    int location=recyclerViewHas.getHeight();
+                    if(location!=hasBlured_bottom3){
+                        Blur.blur(view_test,recyclerViewHas,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
+                        hasBlured_bottom3=location;
+                    }
+
+                    return true;
+                }
+            });
 
 
         }
+    }
+
+    public void initWeatherList(List<Weather>weatherList){
+        SQLiteDatabase db = ((WeatherActivity)getActivity()).dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(LocalDatabaseHelper.tableName, null, null, null, null, null, null);
+        if(cursor.moveToFirst()){
+            do{
+                String responseText=cursor.getString(cursor.getColumnIndex(LocalDatabaseHelper.content));
+               weatherList.add(Utility.handleWeather6Response(responseText));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
     }
 
 

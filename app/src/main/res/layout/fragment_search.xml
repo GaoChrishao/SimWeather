@@ -30,5 +30,14 @@
         android:visibility="invisible"
         ></android.support.v7.widget.RecyclerView>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_search_rv_has"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/background_yuanjiao"
+        ></android.support.v7.widget.RecyclerView>
+
 
 </LinearLayout>

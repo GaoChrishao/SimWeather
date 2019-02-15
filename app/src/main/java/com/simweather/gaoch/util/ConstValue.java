@@ -7,6 +7,8 @@ import android.Manifest;
  */
 
 public class ConstValue {
+    public static final String hasDB="hasDB";
+    public static final String LocalDatabaseName = "simweather.db";
     public static String githubUrl="https://github.com/GaoChrishao/SimWeather";
     public static String key = "ff0bd8c0e7844121aa3b571522a1e9b6";
     public static String colorText = "#ffffff";
@@ -23,6 +25,10 @@ public class ConstValue {
     public static String sp_location="location";
     public static String sp_responseText="responseText6";
     public static String sp_weatherid="weatherId";
+
+    //定位
+    public static double currentLatitude;
+    public static double currentLongitude;
 
     //毛玻璃效果参数
     public static String sp_radius="sp_radius";
