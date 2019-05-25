@@ -3,11 +3,11 @@ package com.simweather.gaoch;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +19,6 @@ import com.simweather.gaoch.gson_city.CitySearch;
 import com.simweather.gaoch.util.ConstValue;
 import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.MyAppCompatActivity;
-import com.simweather.gaoch.util.Utility;
 
 import org.json.JSONArray;
 import org.json.JSONException;

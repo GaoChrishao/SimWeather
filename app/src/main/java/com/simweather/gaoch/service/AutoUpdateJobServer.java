@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -31,7 +31,6 @@ import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.Utility;
 
 import java.io.IOException;
-import java.io.PipedReader;
 
 import okhttp3.Call;
 import okhttp3.Callback;

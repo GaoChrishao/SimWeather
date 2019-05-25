@@ -1,8 +1,8 @@
 package com.simweather.gaoch.util;
 
 import android.app.Activity;
-import android.os.StrictMode;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.HashMap;
 import java.util.Map;

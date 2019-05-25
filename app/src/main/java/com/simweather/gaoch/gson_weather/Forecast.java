@@ -1,10 +1,12 @@
 package com.simweather.gaoch.gson_weather;
-import com.google.gson.annotations.SerializedName;
+
+import androidx.annotation.Keep;
 
 /**
  * Created by GaoCh on 2018/7/23.
  */
 
+@Keep
 public class Forecast {
     public String date;    //预报日期
     public String cond_code_d;      //白天天气状况代码

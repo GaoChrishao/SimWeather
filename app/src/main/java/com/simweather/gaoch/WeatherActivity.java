@@ -24,17 +24,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
-import android.support.v7.graphics.Palette;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
@@ -47,11 +38,20 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.palette.graphics.Palette;
 
+import com.google.android.material.navigation.NavigationView;
 import com.simweather.gaoch.gson_weather.Weather;
 import com.simweather.gaoch.service.AutoUpdateJobServer;
 import com.simweather.gaoch.service.AutoUpdateService;
-import com.simweather.gaoch.util.Blur;
+import com.simweather.gaoch.util.BlurSingle;
 import com.simweather.gaoch.util.ConstValue;
 import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.MyAppCompatActivity;
@@ -66,7 +66,6 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 import static com.simweather.gaoch.util.ConstValue.LOCATIONGPS;
-import static com.simweather.gaoch.util.ConstValue.currentLatitude;
 import static com.simweather.gaoch.util.ConstValue.sp_radius;
 
 public class WeatherActivity extends MyAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -92,10 +91,17 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Blur.bkg=null;
         primaryColor=0;
         initTheme();
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
         setContentView(R.layout.activity_weather);
         drawerLayout = findViewById(R.id.drawer_layout);
         locate = findViewById(R.id.nav_header_locate);
@@ -159,7 +165,9 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (item.getItemId()) {
                     case R.id.nav_weather:
-                        if (hasDB) {
+                        SharedPreferences sharedPreferences=getSharedPreferences(ConstValue.configDataName,MODE_PRIVATE);
+                        hasDB=sharedPreferences.getBoolean(ConstValue.hasDB,false);
+                        if (hasDB||!Utility.isDbEmpty(dbHelper.getReadableDatabase())) {
                             //如果已经有天气缓存，则从天气缓存得到天气
                             showFragmentWeather();
                             navView.setCheckedItem(R.id.nav_weather);
@@ -212,31 +220,11 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                 return false;
             }
         });
+
+
+        setBg();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e("WeatherActivity","onResume()");
-        if(bgPNG ==null){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS );
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |  View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(Color.TRANSPARENT);
-            }
-            setBg();
-        }
-
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.e("WeatherActivity", "onDestroy");
-    }
 
     /**
      * 根据天气id请求城市天气信息
@@ -624,14 +612,6 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                 return;
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getWindow();
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(Color.TRANSPARENT);
-                window.setNavigationBarColor(Color.TRANSPARENT);
-            }
             changeVarHeadColor();
 
         }
@@ -742,8 +722,12 @@ public class WeatherActivity extends MyAppCompatActivity implements ActivityComp
                     }).start();
                     FrameLayout layout = findViewById(R.id.main_fragment);
                     layout.setBackground(Drawable.createFromPath(path));
+                    if(getIsBlur()){
+                        BlurSingle.initBkg(layout,ConstValue.radius,ConstValue.scaleFactor);
+                    }
                     cursor.close();
-                    Toast.makeText(this, "重启生效！", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "重启生效！", Toast.LENGTH_SHORT).show();
+                    setBg();
                 }
                 break;
         }

@@ -12,25 +12,7 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
--keepclassmembers class fqcn.of.javascript.interface.for.webview {
-   public *;
-}
--keep public class android.net.http.SslError
--keep public class android.webkit.WebViewClient
 
--dontwarn android.webkit.WebView
--dontwarn android.net.http.SslError
--dontwarn android.webkit.WebViewClient
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
--keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
--renamesourcefileattribute SourceFile
-
--keepattributes Exceptions, Signature, InnerClasses
 
 # Keep - Library. Keep all public and protected classes, fields, and methods.
 -keep public class * {
@@ -50,21 +32,6 @@
     native <methods>;
 }
 
-# 不做预校验
--dontpreverify
-
-### 忽略警告
--ignorewarning
-
-#如果引用了v4或者v7包
--dontwarn android.support.**
--keep class android.support.v7.** { *; }
--keep public class * extends android.support.v7.**
--keep class android.support.v4.** { *; }
--keep public class * extends android.support.v4.**
--keep public class * extends android.app.Fragment
-
--keepattributes EnclosingMethod
 
  #如果有其它包有warning，在报出warning的包加入下面类似的-dontwarn 报名
 -dontwarn com.simweather.*.**

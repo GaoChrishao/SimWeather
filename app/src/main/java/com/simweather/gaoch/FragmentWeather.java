@@ -1,33 +1,27 @@
 package com.simweather.gaoch;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.Display;
-import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.simweather.gaoch.MyView.LineHourlyView;
 import com.simweather.gaoch.MyView.LineView;
 import com.simweather.gaoch.gson_weather.Forecast;
+import com.simweather.gaoch.gson_weather.Suggestion;
 import com.simweather.gaoch.gson_weather.Weather;
-import com.simweather.gaoch.util.Blur;
+import com.simweather.gaoch.util.BlurSingle;
 import com.simweather.gaoch.util.ConstValue;
 import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.Utility;
@@ -56,25 +50,17 @@ public class FragmentWeather extends Fragment {
     private TextView comfortText,carWashText,drsgText,uvText,travText,fluText,airText,sportText;      //lifestyle
     public SwipeRefreshLayout swipeRefresh;
 
-    private int hasBlured_top1=0,hasBlured_top2=0,hasBlured_top3=0,hasBlured_top4=0;
-    private int hasBlured_left1=0,hasBlured_left2=0,hasBlured_left3=0,hasBlured_left4=0;
+    private BlurSingle.BlurLayout blur1,blur2,blur3,blur4;
     private LineView lineView_max;
     private LineHourlyView mylineHourlyView;;
 
     private  LinearLayout layout_suggestion, layout_forecast, layout_aqi,layout_forecast_paint,layout_hourly;
     private Weather weather;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.e("GGG","onAtach");
-    }
+    private boolean hasBlur=false;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.e("GGG","onCreate");
-    }
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather,container,false);
@@ -122,8 +108,13 @@ public class FragmentWeather extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("FragmentWeather","OnResume()");
         showWeatherInfo(weather);
+        if(!hasBlur){
+            /**
+             * 毛玻璃效果
+             */
+            setBlur();
+        }
     }
 
     @Override
@@ -157,10 +148,7 @@ public class FragmentWeather extends Fragment {
         Log.d("FragmentWeather","OnCreate()");
 
 
-        /**
-         * 毛玻璃效果
-         */
-        setBlur();
+
 
 
 
@@ -272,6 +260,14 @@ public class FragmentWeather extends Fragment {
             cloudText.setText(weather.now.cloud);
 
             //lifestyle
+            if(weather.lifestyle==null){
+                weather.lifestyle=new ArrayList<Suggestion>();
+                Suggestion suggestion=new Suggestion();
+                for(int i=0;i<8;i++){
+                    weather.lifestyle.add(suggestion);
+                }
+
+            }
             Log.e("GGG","lifestyle的size:"+weather.lifestyle.size());
             comfortText.setText(weather.lifestyle.get(0).brf);
             carWashText.setText(weather.lifestyle.get(6).brf);
@@ -281,6 +277,7 @@ public class FragmentWeather extends Fragment {
             fluText.setText(weather.lifestyle.get(2).brf);
             airText.setText(weather.lifestyle.get(7).brf);
             sportText.setText(weather.lifestyle.get(3).brf);
+
 
             weatherLayout.setVisibility(View.VISIBLE);
             WeatherActivity activity = (WeatherActivity) getActivity();
@@ -292,64 +289,15 @@ public class FragmentWeather extends Fragment {
     }
 
     public void setBlur(){
-        final View view_test=((WeatherActivity)getActivity()).blur_main;
+
         if(((WeatherActivity) getActivity()).getIsBlur()){
-            layout_forecast.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int []location=new int[2];
-                    layout_forecast.getLocationInWindow(location);
-                    if(location[1]!=hasBlured_top1||location[0]!=hasBlured_left1){
-                        Blur.blur(view_test,layout_forecast,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top1=location[1];
-                        hasBlured_left1=location[0];
-                    }
-                    Log.e("GGG","location:"+location[0]+" "+location[1]);
-
-                    return true;
-                }
-            });
-            layout_suggestion.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int []location=new int[2];
-                    layout_suggestion.getLocationInWindow(location);
-                    if(location[1]!=hasBlured_top2||location[0]!=hasBlured_left2){
-                        Blur.blur(view_test,layout_suggestion,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top2=location[1];
-                        hasBlured_left2=location[0];
-                    }
-
-                    return true;
-                }
-            });
-            layout_aqi.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int []location=new int[2];
-                    layout_aqi.getLocationInWindow(location);
-                    if(location[1]!=hasBlured_top3||location[0]!=hasBlured_left3){
-                        Blur.blur(view_test,layout_aqi,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top3=location[1];
-                        hasBlured_left3=location[0];
-                    }
-                    return true;
-                }
-            });
-
-            layout_hourly.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int []location=new int[2];
-                    layout_hourly.getLocationInWindow(location);
-                    if(location[1]!=hasBlured_top4||location[0]!=hasBlured_left4){
-                        Blur.blur(view_test,layout_hourly,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top4=location[1];
-                        hasBlured_left4=location[0];
-                    }
-                    return true;
-                }
-            });
+            Log.d("Sim","开启模糊");
+            hasBlur=true;
+            final View view_test=((WeatherActivity)getActivity()).blur_main;
+            blur1=new BlurSingle.BlurLayout(layout_suggestion,view_test);
+            blur2=new BlurSingle.BlurLayout(layout_hourly,view_test);
+            blur3=new BlurSingle.BlurLayout(layout_forecast,view_test);
+            blur4=new BlurSingle.BlurLayout(layout_aqi,view_test);
 
 
         }

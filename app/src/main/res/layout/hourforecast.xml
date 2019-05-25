@@ -7,6 +7,8 @@
     android:orientation="vertical"
     android:background="@drawable/background_yuanjiao"
     android:layout_margin="15dp"
+    android:clickable="true"
+    android:foreground="@drawable/bkg_ripper"
     >
     <TextView
         android:layout_width="wrap_content"

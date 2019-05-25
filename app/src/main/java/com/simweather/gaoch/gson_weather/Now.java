@@ -1,11 +1,12 @@
 package com.simweather.gaoch.gson_weather;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.Keep;
 
 /**
  * Created by GaoCh on 2018/7/23.
  */
 
+@Keep
 public class Now {
     public String tmp;       //温度，默认单位：摄氏度
     public String cloud;        //云量

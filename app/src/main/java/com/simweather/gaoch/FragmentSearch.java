@@ -1,34 +1,35 @@
 package com.simweather.gaoch;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.SearchView;
-import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.google.gson.Gson;
 import com.simweather.gaoch.gson_city.CityAdapter;
 import com.simweather.gaoch.gson_city.CityHasAdapter;
 import com.simweather.gaoch.gson_city.CitySearch;
 import com.simweather.gaoch.gson_weather.Weather;
-import com.simweather.gaoch.util.Blur;
+import com.simweather.gaoch.util.BlurSingle;
 import com.simweather.gaoch.util.ConstValue;
 import com.simweather.gaoch.util.HttpUtil;
 import com.simweather.gaoch.util.Utility;
@@ -54,13 +55,16 @@ import static android.content.Context.MODE_PRIVATE;
 public class FragmentSearch extends Fragment {
     private ProgressDialog progressDialog;
     private int hasBlured_bottom1=0,hasBlured_bottom2=0,hasBlured_bottom3;
+    private BlurSingle.BlurLayout blur1,blur2,blur3;
     private SearchView searchCities;
     private RecyclerView recyclerView,recyclerViewHas;
     private CityAdapter adapter;
     private CityHasAdapter cityHasAdapter;
     private List<CitySearch.Basic> cityList;
     private List<Weather>weatherList;
-
+    private LinearLayout layoutTitle;
+    private Button navButton;
+    private boolean hasBlur=false;
 
 
 
@@ -71,15 +75,28 @@ public class FragmentSearch extends Fragment {
        searchCities=view.findViewById(R.id.fragment_search_sv);
        searchCities.setSubmitButtonEnabled(true);
        //searchCities.onActionViewExpanded();
+        layoutTitle=view.findViewById(R.id.fragment_search_title);
+        navButton=view.findViewById(R.id.nav_button);
+
         searchCities.setIconifiedByDefault(false);
        recyclerView=view.findViewById(R.id.fragment_search_rv);
        recyclerViewHas=view.findViewById(R.id.fragment_search_rv_has);
+
+
+        Utility.setBelowStatusBar(getContext(),layoutTitle,view,15,15);
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WeatherActivity activity = (WeatherActivity) getActivity();
+                activity.showDrawer();
+            }
+        });
         cityList=new ArrayList<CitySearch.Basic>();
         adapter = new CityAdapter(cityList);
         adapter.setOnItemClickListener(new CityAdapter.OnItemClickListener() {
@@ -143,8 +160,6 @@ public class FragmentSearch extends Fragment {
         if(weatherList.size()<=0){
             recyclerViewHas.setVisibility(View.GONE);
         }
-
-        setBlur();
 
     }
 
@@ -216,6 +231,13 @@ public class FragmentSearch extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!hasBlur){
+            setBlur();
+        }
+    }
 
     public void requestWeather(final String weatherId) {
         final WeatherActivity activity = (WeatherActivity) getActivity();
@@ -235,8 +257,27 @@ public class FragmentSearch extends Fragment {
                 final String responseText = response.body().string();
                 final Weather weather = Utility.handleWeather6Response(responseText);
                 if (weather != null && "ok".equals(weather.status)) {
+//                    Log.d("FragmenSearch", "requestWeather()从服务器获取");
+//
+//
+//                    try {
+//                        JSONObject jsonObject = null;
+//                        jsonObject = new JSONObject(responseText);
+//                        JSONArray jsonArray = jsonObject.getJSONArray("HeWeather6");
+//                        if(!jsonArray.getJSONObject(0).has("now")){
+//                            Message msg = new Message();
+//                            msg.what=2;
+//                            handler.sendMessage(msg);
+//                            return;
+//                        }
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+                Log.e("Frag",responseText);
+
+
                     Utility.saveWeatherToDB(((WeatherActivity)getActivity()).dbHelper.getWritableDatabase(),responseText);
-                    Log.d("FragmenSearch", "requestWeather()从服务器获取");
                     Message msg = new Message();
                     msg.what=3;
                     handler.sendMessage(msg);
@@ -281,46 +322,12 @@ public class FragmentSearch extends Fragment {
     };
 
     public void setBlur(){
-        final View view_test=((WeatherActivity)getActivity()).blur_main;
         if(((WeatherActivity) getActivity()).getIsBlur()){
-            recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int location=recyclerView.getHeight();
-                    if(location!=hasBlured_bottom1){
-                        Blur.blur(view_test,recyclerView,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_bottom1=location;
-                    }
-
-                    return true;
-                }
-            });
-            searchCities.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int location=searchCities.getHeight();
-                    if(location!=hasBlured_bottom2){
-                        Blur.blur(view_test,searchCities,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                       hasBlured_bottom2=location;
-                    }
-
-                    return true;
-                }
-            });
-            recyclerViewHas.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    int location=recyclerViewHas.getHeight();
-                    if(location!=hasBlured_bottom3){
-                        Blur.blur(view_test,recyclerViewHas,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_bottom3=location;
-                    }
-
-                    return true;
-                }
-            });
-
-
+            hasBlur=true;
+            final View view_test=((WeatherActivity)getActivity()).blur_main;
+            blur1=new BlurSingle.BlurLayout(recyclerView,view_test);
+            blur2=new BlurSingle.BlurLayout(searchCities,view_test);
+            blur3=new BlurSingle.BlurLayout(recyclerViewHas,view_test);
         }
     }
 

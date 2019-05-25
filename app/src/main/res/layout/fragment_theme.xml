@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
+    android:id="@+id/fragment_theme_mother"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -19,8 +20,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
             android:padding="15dp"
             android:id="@+id/fragment_theme_layout_1"
+            android:clickable="true"
+            android:foreground="@drawable/bkg_ripper"
             >
 
             <TextView
@@ -119,7 +123,10 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:clickable="true"
+            android:foreground="@drawable/bkg_ripper"
+            >
             <TextView
                 android:layout_marginTop="20dp"
                 android:text="2.自定义背景图片"
@@ -163,7 +170,10 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:padding="15dp">
+            android:padding="15dp"
+            android:clickable="true"
+            android:foreground="@drawable/bkg_ripper"
+            >
             <TextView
                 android:layout_marginTop="20dp"
                 android:text="3.毛玻璃效果"
@@ -203,6 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="25"
+                    android:min="2"
                     />
                 <TextView
                     android:id="@+id/config_theme_text_blur"

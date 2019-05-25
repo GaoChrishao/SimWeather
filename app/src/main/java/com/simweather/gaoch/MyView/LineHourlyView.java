@@ -41,7 +41,7 @@ public class LineHourlyView extends View {
         dotList=new ArrayList<HourFor>();
         db=Utility.dp2px(context,1);
         sp=Utility.sp2px(context,1);
-        Log.e("LineHourlyView","构造函数1");
+
     }
     public LineHourlyView(Context context, AttributeSet attrs){
         super(context,attrs);
@@ -50,11 +50,11 @@ public class LineHourlyView extends View {
         dotList=new ArrayList<HourFor>();
         db=Utility.dp2px(context,1);
         sp=Utility.sp2px(context,1);
-        Log.e("LineHourlyView","构造函数2");
+
     }
     public void addDots(List<HourFor> list){
         if(list!=null&&list.size()>0){
-            Log.d("LineHourlyView:","size="+list.size()+"");
+
             dotList.clear();
             dotList.addAll(list);
         }
@@ -71,7 +71,7 @@ public class LineHourlyView extends View {
         textSize=Utility.sp2px(getContext(),10);
         picSize=Utility.dp2px(getContext(),20);
 
-        Log.e("LineHourlyView","addDots");
+
     }
 
     public void getLines(Canvas canvas){
@@ -81,13 +81,11 @@ public class LineHourlyView extends View {
         height=(maxHeight/3)/(maxValue-minValue);  //每度的高度
         startY=maxHeight/5;
         startX=(float)(width/2.5);
-        Log.e("LineHourlyView","maxWidth="+maxWidth+",maxHeight="+maxHeight);
         Path path = new Path();
         mPaint.setStyle(Paint.Style.FILL);
         for (int i = 0; i <= dotList.size() - 1; i++) {
 
             int high=Integer.valueOf(dotList.get(i).tmp);
-            Log.e("LineHourlyView",startX+""+(startY-(high-maxValue)*height));
             if (i == 0) {
                 path.moveTo(startX, startY-(high-maxValue)*height);
             } else {
@@ -107,7 +105,6 @@ public class LineHourlyView extends View {
             canvas.drawText(data2simData(dotList.get(i).time),startX+width*i-textSize,(float)(startY*4.2),mPaint);
             canvas.drawText(data2simData1(dotList.get(i).time),startX+width*i-textSize,(float)(startY*4.6),mPaint);
         }
-        Log.e("LineHourlyView","getLines()");
 
     }
 

@@ -1,32 +1,16 @@
 package com.simweather.gaoch.gson_city;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.simweather.gaoch.R;
-import com.simweather.gaoch.WeatherActivity;
-import com.simweather.gaoch.gson_weather.Weather;
-import com.simweather.gaoch.util.ConstValue;
-import com.simweather.gaoch.util.HttpUtil;
-import com.simweather.gaoch.util.Utility;
 
-import java.io.IOException;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class CityAdapter extends RecyclerView.Adapter<CityAdapter.ViewHolder>implements View.OnClickListener {
     private List<CitySearch.Basic> citySearchList=null;

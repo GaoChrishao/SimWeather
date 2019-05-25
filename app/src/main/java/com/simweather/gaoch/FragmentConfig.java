@@ -1,14 +1,9 @@
 package com.simweather.gaoch;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -16,8 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.simweather.gaoch.util.Blur;
-import com.simweather.gaoch.util.ConstValue;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.simweather.gaoch.util.BlurSingle;
+import com.simweather.gaoch.util.Utility;
 
 
 /**
@@ -32,7 +31,9 @@ public class FragmentConfig extends Fragment {
     private EditText hoursInput;
     private Switch backServiceSwitch;
     private LinearLayout layout1,layout2,layoutBG,layout3;
-    int hasBlured_top1=0,hasBlured_top2=0,hasBlured_top3=0;
+    private BlurSingle.BlurLayout blur1,blur2,blur3;
+
+    private boolean hasBlur=false;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +48,9 @@ public class FragmentConfig extends Fragment {
         layout1 = view.findViewById(R.id.config_li_1);
         layout2 = view.findViewById(R.id.config_li_2);
         layout3=view.findViewById(R.id.config_li_3);
+
+        Utility.setBelowStatusBar(getContext(),view.findViewById(R.id.fragment__config_title),view,0,0);
+
         return view;
     }
 
@@ -110,48 +114,24 @@ public class FragmentConfig extends Fragment {
         });
 
 
-        /**
-         *初始背景图片
-         */
-        setBlur();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!hasBlur){
+            setBlur();
+        }
+    }
 
     public void setBlur(){
         if(((WeatherActivity)getActivity()).getIsBlur()){
+            hasBlur=true;
             final View view_test=((WeatherActivity)getActivity()).blur_main;
-            layout1.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top1!=layout1.getTop()){
-                        Blur.blur_static(view_test,layout1,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top1=layout1.getTop();
-                    }
+            blur1=new BlurSingle.BlurLayout(layout1,view_test);
+            blur2=new BlurSingle.BlurLayout(layout2,view_test);
+            blur3=new BlurSingle.BlurLayout(layout3,view_test);
 
-                    return true;
-                }
-            });
-            layout2.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top2!=layout2.getTop()){
-                        Blur.blur_static(view_test,layout2,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top2=layout2.getTop();
-                    }
-
-                    return true;
-                }
-            });
-            layout3.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top3!=layout3.getTop()){
-                        Blur.blur_static(view_test,layout3,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top3=layout3.getTop();
-                    }
-                    return true;
-                }
-            });
         }
     }
 }

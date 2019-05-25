@@ -1,13 +1,12 @@
 package com.simweather.gaoch.gson_city;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.simweather.gaoch.R;
 import com.simweather.gaoch.gson_weather.Weather;
@@ -72,7 +71,6 @@ public class CityHasAdapter extends RecyclerView.Adapter<CityHasAdapter.ViewHold
         }else{
             return 0;
         }
-
     }
 
 

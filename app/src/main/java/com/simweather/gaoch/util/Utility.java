@@ -2,15 +2,15 @@ package com.simweather.gaoch.util;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.simweather.gaoch.LocalDatabaseHelper;
-import com.simweather.gaoch.WeatherActivity;
 import com.simweather.gaoch.gson_weather.Weather;
 
 import org.json.JSONArray;
@@ -83,6 +83,26 @@ public class Utility {
         db.close();
         return true;
     }
+
+    public static int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId =context.getResources().getIdentifier("status_bar_height","dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        Log.e("GGG","状态栏的高度:"+result);
+        return result;
+    }
+
+    public static void setBelowStatusBar(Context context, View view,View mother,int left_dp,int right_dp){
+        ViewGroup.MarginLayoutParams margin = new ViewGroup.MarginLayoutParams(view.getLayoutParams());
+        int top = Utility.getStatusBarHeight(context);
+        //设置位置参数，left，top,right,bottom。
+        margin.setMargins(Utility.dp2px(context,left_dp), top+10, Utility.dp2px(context,right_dp), 0);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(margin);
+        mother.setLayoutParams(layoutParams);
+    }
+
 
 
 

@@ -10,7 +10,8 @@ public class ConstValue {
     public static final String hasDB="hasDB";
     public static final String LocalDatabaseName = "simweather.db";
     public static String githubUrl="https://github.com/GaoChrishao/SimWeather";
-    public static String key = "ff0bd8c0e7844121aa3b571522a1e9b6";
+    public static String myMail="gaochrishao@outlook.com";
+    public static String key = "此处请使用自己的key";  //请使用自己的key
     public static String colorText = "#ffffff";
     public static String colorPrimary = "#67b4c7";
     public static String colorPrimaryDark = "#497d8b";

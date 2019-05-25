@@ -3,29 +3,28 @@ package com.simweather.gaoch;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.simweather.gaoch.util.Blur;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.simweather.gaoch.util.BlurSingle;
 import com.simweather.gaoch.util.ConstValue;
+import com.simweather.gaoch.util.Utility;
 
 
 /**
@@ -43,8 +42,10 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
     private TextView text_blur;
     private LinearLayout layout1, layout2,layout3;
     int hasSetRadioButtomsColor=0;
-    private int hasBlured_top1=0,hasBlured_top2=0,hasBlured_top3=0;
-
+    private BlurSingle.BlurLayout blur1,blur2,blur3;
+    private boolean hasBlur=false;
+    private ScrollView scrollView;
+    private LinearLayout layout_title;
 
 
     @Nullable
@@ -83,12 +84,21 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
         rb_pink.setOnCheckedChangeListener(this);
         rb_red.setOnCheckedChangeListener(this);
         rb_yellow.setOnCheckedChangeListener(this);
+
+        layout_title=view.findViewById(R.id.fragment_theme_layout);
+        scrollView=view.findViewById(R.id.fragment_theme_mother);
+        Utility.setBelowStatusBar(getContext(),layout_title,view,0,0);
+
+
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        if(!hasBlur){
+            setBlur();
+        }
     }
 
     @Override
@@ -101,11 +111,17 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
                 if(isChecked&& ((WeatherActivity) getActivity()).getIsBlur()==false){
                     WeatherActivity activity = (WeatherActivity) getActivity();
                     activity.saveIsBlur(true);
-                    Toast.makeText(getContext(), "开启毛玻璃效果,重启生效", Toast.LENGTH_SHORT).show();
+                    setBlur();
+                    seek_blur.setVisibility(View.VISIBLE);
+                    text_blur.setVisibility(View.VISIBLE);
                 }else if(!isChecked){
                     WeatherActivity activity = (WeatherActivity) getActivity();
                     activity.saveIsBlur(false);
-                    Toast.makeText(getContext(), "已关闭毛玻璃效果，重启生效", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "重启生效", Toast.LENGTH_SHORT).show();
+                    seek_blur.setVisibility(View.GONE);
+                    text_blur.setVisibility(View.GONE);
+
+
                 }
             }
         });
@@ -126,10 +142,18 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                if(ConstValue.radius<2){
+                    ConstValue.radius=2;
+                }
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences(ConstValue.getConfigDataName(),Context.MODE_PRIVATE).edit();
                 editor.putInt(ConstValue.sp_radius,ConstValue.radius);
                 editor.apply();
-                Toast.makeText(getContext(), "重启生效", Toast.LENGTH_SHORT).show();
+                final View view_test=((WeatherActivity)getActivity()).blur_main;
+                BlurSingle.initBkg(view_test,ConstValue.radius,ConstValue.scaleFactor);
+                blur1.reSetPositions();
+                blur2.reSetPositions();
+                blur3.reSetPositions();
+
             }
         });
 
@@ -147,6 +171,12 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
             public void onClick(View v) {
                 WeatherActivity activity = (WeatherActivity) getActivity();
                 activity.chooseBg();
+                if(hasBlur){
+                    blur1.reSetPositions();
+                    blur2.reSetPositions();
+                    blur3.reSetPositions();
+                }
+
             }
         });
         BgButton1.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +184,8 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
             public void onClick(View v) {
                 WeatherActivity activity = (WeatherActivity) getActivity();
                 activity.cancelBg();
+                activity.saveIsBlur(false);
+                switch_blur.setChecked(false);
             }
         });
 
@@ -168,7 +200,7 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
         }
 
         setRadioButtomsColor(activity);
-        setBlur();
+
 
     }
 
@@ -247,38 +279,9 @@ public class FragmentTheme extends Fragment implements CompoundButton.OnCheckedC
     public void setBlur(){
         if(((WeatherActivity)getActivity()).getIsBlur()){
             final View view_test=((WeatherActivity)getActivity()).blur_main;
-            layout1.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top1!=layout1.getTop()){
-                        Blur.blur(view_test,layout1,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top1=layout1.getTop();
-                    }
-
-                    return true;
-                }
-            });
-            layout2.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top2!=layout2.getTop()){
-                        Blur.blur(view_test,layout2,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top2=layout2.getTop();
-                    }
-
-                    return true;
-                }
-            });
-            layout3.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if(hasBlured_top3!=layout3.getTop()){
-                        Blur.blur(view_test,layout3,ConstValue.radius,ConstValue.scaleFactor,ConstValue.RoundCorner);
-                        hasBlured_top3=layout3.getTop();
-                    }
-                    return true;
-                }
-            });
+            blur1=new BlurSingle.BlurLayout(layout1,view_test);
+            blur2=new BlurSingle.BlurLayout(layout2,view_test);
+            blur3=new BlurSingle.BlurLayout(layout3,view_test);
         }
     }
 }

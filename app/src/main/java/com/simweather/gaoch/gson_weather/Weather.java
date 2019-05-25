@@ -1,5 +1,7 @@
 package com.simweather.gaoch.gson_weather;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.List;
  * Created by GaoCh on 2018/7/23.
  */
 
+@Keep
 public class Weather {
     public String status;
     public Basic basic;

@@ -1,13 +1,8 @@
 package com.simweather.gaoch;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +11,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.simweather.gaoch.MyView.PageIndicator;
-import com.simweather.gaoch.gson_weather.Weather;
 import com.simweather.gaoch.util.Utility;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +79,12 @@ public class FragmentWeathers extends Fragment {
         navButton = view.findViewById(R.id.nav_button);
         progressBar=view.findViewById(R.id.fragment_weathers_pb);
         dots=view.findViewById(R.id.dot_horizontal);
+
+
+        Utility.setBelowStatusBar(getContext(),view.findViewById(R.id.fragment_weathers),view,0,0);
+
+
+
         return view;
     }
 
